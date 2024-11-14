@@ -6,67 +6,71 @@
 #include "timer.h"
 #include "keyboard.h"
 
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 600
-#define PLAYER_SPEED 5
-#define BULLET_SPEED 10
-#define INVADER_ROWS 5
-#define INVADER_COLS 10
-#define INVADER_SPEED 2
-#define MAX_NAME_LENGTH 20
+#define SCREEN_WIDTH 800 // Largura da tela do jogo
+#define SCREEN_HEIGHT 600 // Altura da tela do jogo
+#define PLAYER_SPEED 5 // Velocidade do jogador
+#define BULLET_SPEED 10 // Velocidade da bala
+#define INVADER_ROWS 5 // Número de linhas de invasores
+#define INVADER_COLS 10 // Número de colunas de invasores
+#define INVADER_SPEED 2 // Velocidade dos invasores
+#define MAX_NAME_LENGTH 20 // Comprimento máximo do nome do jogador
 
 // Estruturas de sprites
-const char *PLAYER_SPRITE = "A";
-const char *INVADER_SPRITE = "M";
-const char *BULLET_SPRITE = "|";
-const char *ALIEN_BULLET_SPRITE = "v";
+const char *PLAYER_SPRITE = "A"; // Sprite do jogador
+const char *INVADER_SPRITE = "M"; // Sprite do invasor
+const char *BULLET_SPRITE = "|"; // Sprite da bala do jogador
+const char *ALIEN_BULLET_SPRITE = "v"; // Sprite da bala do invasor
 
 // Variáveis globais do jogo
-int playerX, playerY;
-int bulletX = -1, bulletY = -1;
-int alienBulletX = -1, alienBulletY = -1;
-int score = 0;
-int invaders[INVADER_ROWS][INVADER_COLS];
-int invaderPosX[INVADER_ROWS][INVADER_COLS];
-int invaderPosY[INVADER_ROWS][INVADER_COLS];
-int gameState = 0; // 0 = menu, 1 = jogando, 2 = game over
+int playerX, playerY; // Posição do jogador
+int bulletX = -1, bulletY = -1; // Posição da bala do jogador
+int alienBulletX = -1, alienBulletY = -1; // Posição da bala do invasor
+int score = 0; // Pontuação do jogador
+int invaders[INVADER_ROWS][INVADER_COLS]; // Matriz de invasores
+int invaderPosX[INVADER_ROWS][INVADER_COLS]; // Posições X dos invasores
+int invaderPosY[INVADER_ROWS][INVADER_COLS]; // Posições Y dos invasores
+int gameState = 0; // 0 = menu, 1 = jogando, 2 = game over, 3 = highscore
 char playerName[MAX_NAME_LENGTH + 1] = {0}; // Nome do jogador
-int nameIndex = 0; // Índice para controle de caracteres
+int nameIndex = 0; // Índice para controle de caracteres do nome
 int nameEntered = 0; // Flag para verificar se o nome foi inserido
 
 // Funções de inicialização
-void initGame();
-void resetGame();
-void saveScore();
+void initGame(); // Inicializa o jogo
+void resetGame(); // Reseta o jogo
+void saveScore(); // Salva a pontuação
 
 // Funções de desenho
-void drawPlayer();
-void drawInvaders();
-void drawBullet();
-void drawAlienBullet();
-void displayScore();
-void gameOver();
+void drawPlayer(); // Desenha o jogador
+void drawInvaders(); // Desenha os invasores
+void drawBullet(); // Desenha a bala do jogador
+void drawAlienBullet(); // Desenha a bala do invasor
+void displayScore(); // Exibe a pontuação
+void gameOver(); // Exibe a tela de game over
 
 // Funções de movimentação e controle
-void movePlayer();
-void shootBullet();
-void updateBullet();
-void updateAlienBullet();
-void updateInvaders();
-void alienShoot();
-void checkCollisions();
+void movePlayer(); // Move o jogador
+void shootBullet(); // Dispara uma bala do jogador
+void updateBullet(); // Atualiza a posição da bala do jogador
+void updateAlienBullet(); // Atualiza a posição da bala do invasor
+void updateInvaders(); // Atualiza a posição dos invasores
+void alienShoot(); // Dispara uma bala do invasor
+void checkCollisions(); // Verifica colisões
 
 int main(void)
 {
+    // Inicializa a janela do jogo
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Invasores do espaço");
-    SetTargetFPS(60);
+    SetTargetFPS(60); // Define o FPS alvo
 
+    // Inicializa as bibliotecas de tela, timer e teclado
     screenInit(1);
     timerInit(1);
     keyboardInit();
 
+    // Inicializa o jogo
     initGame();
 
+    // Loop principal do jogo
     while (!WindowShouldClose())
     {
         // Verifica se o jogador quer sair do jogo
@@ -74,13 +78,14 @@ int main(void)
         {
             if (gameState == 2 && nameEntered)
             {
-                saveScore();
+                saveScore(); // Salva a pontuação se o jogo acabou
             }
-            break;
+            break; // Sai do loop do jogo
         }
 
         if (gameState == 0) // Menu inicial
         {
+            // Desenha o menu
             BeginDrawing();
             ClearBackground(BLACK);
             DrawText("Invasores do Espaco", SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 - 100, 40, WHITE);
@@ -88,6 +93,7 @@ int main(void)
             DrawText("Pressione ESC para sair", SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 + 40, 20, WHITE);
             EndDrawing();
 
+            // Inicia o jogo se ENTER for pressionado
             if (IsKeyPressed(KEY_ENTER)) 
             {
                 gameState = 1;
@@ -95,30 +101,35 @@ int main(void)
         }
         else if (gameState == 1) // Jogo em andamento
         {
-            if (timerTimeOver())
+            if (timerTimeOver()) // Verifica se o tempo do timer acabou
             {
-                screenClear();
+                screenClear(); // Limpa a tela
 
+                // Movimentação do jogador
                 if (IsKeyDown(KEY_A))
                     playerX -= PLAYER_SPEED;
                 if (IsKeyDown(KEY_D))
                     playerX += PLAYER_SPEED;
                 if (IsKeyPressed(KEY_W))
-                    shootBullet();
+                    shootBullet(); // Dispara uma bala
 
+                // Restringe o movimento do jogador aos limites da tela
                 if (playerX < 0) playerX = 0;
                 if (playerX > SCREEN_WIDTH - 20) playerX = SCREEN_WIDTH - 20;
 
+                // Disparo do invasor aleatoriamente
                 if (alienBulletY < 0 && (rand() % 50) == 0)
                 {
                     alienShoot();
                 }
 
+                // Atualiza as posições dos elementos do jogo
                 updateBullet();
                 updateAlienBullet();
                 updateInvaders();
                 checkCollisions();
 
+                // Desenha os elementos do jogo
                 BeginDrawing();
                 ClearBackground(BLACK);
                 drawPlayer();
@@ -128,7 +139,7 @@ int main(void)
                 displayScore();
                 EndDrawing();
 
-                screenUpdate();
+                screenUpdate(); // Atualiza a tela
             }
         }
         else if (gameState == 2) // Game over
@@ -143,6 +154,7 @@ int main(void)
                 DrawText("Pressione ENTER para confirmar", SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 + 40, 20, WHITE);
                 EndDrawing();
 
+                // Captura o nome do jogador
                 int key = GetCharPressed();
                 if (key >= 32 && key <= 125 && nameIndex < MAX_NAME_LENGTH) // Caracteres imprimíveis
                 {
@@ -161,6 +173,7 @@ int main(void)
             }
             else
             {
+                // Exibe as opções de game over
                 BeginDrawing();
                 ClearBackground(BLACK);
                 gameOver();
@@ -169,6 +182,7 @@ int main(void)
                 DrawText("Pressione ESC para sair", SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 + 120, 20, WHITE);
                 EndDrawing();
 
+                // Reinicia ou volta ao menu
                 if (IsKeyPressed(KEY_R))
                 {
                     resetGame();
@@ -194,6 +208,7 @@ int main(void)
     return 0;
 }
 
+// Salva a pontuação do jogador em um arquivo
 void saveScore()
 {
     FILE *file = fopen("score.txt", "a");
@@ -208,37 +223,41 @@ void saveScore()
     }
 }
 
+// Inicializa as variáveis do jogo
 void initGame()
 {
-    playerX = SCREEN_WIDTH / 2;
-    playerY = SCREEN_HEIGHT - 50;
-    bulletX = bulletY = -1;
-    alienBulletX = alienBulletY = -1;
-    score = 0;
+    playerX = SCREEN_WIDTH / 2; // Posição inicial do jogador
+    playerY = SCREEN_HEIGHT - 50; // Posição Y do jogador
+    bulletX = bulletY = -1; // Posição inicial da bala do jogador
+    alienBulletX = alienBulletY = -1; // Posição inicial da bala do invasor
+    score = 0; // Inicializa o score
 
+    // Inicializa as posições dos invasores
     for (int i = 0; i < INVADER_ROWS; i++)
     {
         for (int j = 0; j < INVADER_COLS; j++)
         {
-            invaders[i][j] = 1;
-            invaderPosX[i][j] = 50 + j * 60;
-            invaderPosY[i][j] = 50 + i * 40;
+            invaders[i][j] = 1; // Marca o invasor como ativo
+            invaderPosX[i][j] = 50 + j * 60; // Define a posição X do invasor
+            invaderPosY[i][j] = 50 + i * 40; // Define a posição Y do invasor
         }
     }
 }
 
+// Desenha o jogador na tela
 void drawPlayer()
 {
     DrawText(PLAYER_SPRITE, playerX, playerY, 20, WHITE);
 }
 
+// Desenha os invasores na tela
 void drawInvaders()
 {
     for (int i = 0; i < INVADER_ROWS; i++)
     {
         for (int j = 0; j < INVADER_COLS; j++)
         {
-            if (invaders[i][j] == 1)
+            if (invaders[i][j] == 1) // Verifica se o invasor está ativo
             {
                 DrawText(INVADER_SPRITE, invaderPosX[i][j], invaderPosY[i][j], 20, WHITE);
             }
@@ -246,6 +265,7 @@ void drawInvaders()
     }
 }
 
+// Desenha a bala do jogador na tela
 void drawBullet()
 {
     if (bulletY > 0)
@@ -254,6 +274,7 @@ void drawBullet()
     }
 }
 
+// Desenha a bala do invasor na tela
 void drawAlienBullet()
 {
     if (alienBulletY > 0)
@@ -262,6 +283,7 @@ void drawAlienBullet()
     }
 }
 
+// Exibe a pontuação do jogador
 void displayScore()
 {
     char scoreText[20];
@@ -269,6 +291,7 @@ void displayScore()
     DrawText(scoreText, 10, 10, 20, GREEN);
 }
 
+// Exibe a tela de game over
 void gameOver()
 {
     char message[50];
@@ -276,123 +299,135 @@ void gameOver()
     DrawText(message, SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2, 20, RED);
 }
 
+// Dispara uma bala do jogador
 void shootBullet()
 {
-    if (bulletY < 0)
+    if (bulletY < 0) // Se não há uma bala ativa
     {
-        bulletX = playerX + 10;
-        bulletY = playerY - 10;
+        bulletX = playerX + 10; // Define a posição X da bala
+        bulletY = playerY - 10; // Define a posição Y da bala
     }
 }
 
+// Atualiza a posição da bala do jogador
 void updateBullet()
 {
-    if (bulletY > 0)
+    if (bulletY > 0) // Se a bala está ativa
     {
-        bulletY -= BULLET_SPEED;
+        bulletY -= BULLET_SPEED; // Move a bala para cima
     }
-    else
+    else // Se a bala saiu da tela
     {
         bulletX = -1;
         bulletY = -1;
     }
 }
 
+// Atualiza a posição da bala do invasor
 void updateAlienBullet()
 {
-    if (alienBulletY > 0)
+    if (alienBulletY > 0) // Se a bala está ativa
     {
-        alienBulletY += BULLET_SPEED;
+        alienBulletY += BULLET_SPEED; // Move a bala para baixo
     }
-    else
+    else // Se a bala saiu da tela
     {
         alienBulletX = -1;
         alienBulletY = -1;
     }
 }
 
+// Atualiza a posição dos invasores
 void updateInvaders()
 {
-    static int direction = INVADER_SPEED;
-    static int stepDown = 0;
+    static int direction = INVADER_SPEED; // Direção inicial dos invasores
+    static int stepDown = 0; // Flag para mover os invasores para baixo
 
+    // Atualiza a posição dos invasores
     for (int i = 0; i < INVADER_ROWS; i++)
     {
         for (int j = 0; j < INVADER_COLS; j++)
         {
-            invaderPosX[i][j] += direction;
-            if (invaderPosY[i][j] > playerY - 20)
+            invaderPosX[i][j] += direction; // Move o invasor na direção atual
+            if (invaderPosY[i][j] > playerY - 20) // Verifica se os invasores chegaram perto do jogador
             {
-                gameState = 2;
+                gameState = 2; // Define o estado do jogo como game over
                 return;
             }
         }
     }
 
+    // Verifica se os invasores precisam mudar de direção
     if (invaderPosX[0][0] <= 0 || invaderPosX[0][INVADER_COLS - 1] >= SCREEN_WIDTH - 20)
     {
-        direction = -direction;
-        stepDown = 1;
+        direction = -direction; // Inverte a direção dos invasores
+        stepDown = 1; // Sinaliza para mover os invasores para baixo
     }
 
+    // Move os invasores para baixo se necessário
     if (stepDown)
     {
         for (int i = 0; i < INVADER_ROWS; i++)
         {
             for (int j = 0; j < INVADER_COLS; j++)
             {
-                invaderPosY[i][j] += 20;
+                invaderPosY[i][j] += 20; // Move o invasor para baixo
             }
         }
-        stepDown = 0;
+        stepDown = 0; // Reseta a flag
     }
 }
 
+// Dispara uma bala de um invasor
 void alienShoot()
 {
     for (int i = INVADER_ROWS - 1; i >= 0; i--)
     {
         for (int j = rand() % INVADER_COLS; j < INVADER_COLS; j++)
         {
-            if (invaders[i][j] == 1)
+            if (invaders[i][j] == 1) // Se o invasor está ativo
             {
-                alienBulletX = invaderPosX[i][j];
-                alienBulletY = invaderPosY[i][j] + 20;
+                alienBulletX = invaderPosX[i][j]; // Define a posição X da bala
+                alienBulletY = invaderPosY[i][j] + 20; // Define a posição Y da bala
                 return;
             }
         }
     }
 }
 
+// Verifica colisões entre balas e invasores/jogador
 void checkCollisions()
 {
+    // Verifica colisões entre a bala do jogador e os invasores
     for (int i = 0; i < INVADER_ROWS; i++)
     {
         for (int j = 0; j < INVADER_COLS; j++)
         {
-            if (invaders[i][j] == 1)
+            if (invaders[i][j] == 1) // Se o invasor está ativo
             {
                 if (bulletX >= invaderPosX[i][j] && bulletX <= invaderPosX[i][j] + 10 &&
-                    bulletY >= invaderPosY[i][j] && bulletY <= invaderPosY[i][j] + 10)
+                    bulletY >= invaderPosY[i][j] && bulletY <= invaderPosY[i][j] + 10) // Se há colisão
                 {
-                    invaders[i][j] = 0;
-                    bulletX = bulletY = -1;
-                    score += 10;
+                    invaders[i][j] = 0; // Desativa o invasor
+                    bulletX = bulletY = -1; // Reseta a bala do jogador
+                    score += 10; // Aumenta a pontuação
                 }
             }
         }
     }
 
+    // Verifica colisões entre a bala do invasor e o jogador
     if (alienBulletY > playerY && alienBulletY < playerY + 10 && alienBulletX > playerX && alienBulletX < playerX + 20)
     {
-        gameState = 2;
+        gameState = 2; // Define o estado do jogo como game over
     }
 }
 
+// Reseta o jogo para o estado inicial
 void resetGame()
 {
-    score = 0;
-    bulletX = bulletY = -1;
-    alienBulletX = alienBulletY = -1;
-    initGame();
+    score = 0; // Reseta a pontuação
+    bulletX = bulletY = -1; // Reseta a bala do jogador
+    alienBulletX = alienBulletY = -1; // Reseta a bala do invasor
+    initGame(); // Inicializa o jogo
 }

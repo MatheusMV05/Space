@@ -52,5 +52,5 @@ Mkfile.old
 dkms.conf
 
 #executavel
-cli-lib-example
-bomberman
+a.out
+score.txt
