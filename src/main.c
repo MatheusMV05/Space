@@ -12,8 +12,10 @@
 #define BULLET_SPEED 10 // Velocidade da bala
 #define INVADER_ROWS 5 // Número de linhas de invasores
 #define INVADER_COLS 10 // Número de colunas de invasores
+#define SHOOT_INTERVAL 30 // Ajuste este valor para aumentar ou diminuir a frequência de disparos
 #define INVADER_SPEED 2 // Velocidade dos invasores
 #define MAX_NAME_LENGTH 20 // Comprimento máximo do nome do jogador
+
 
 // Estruturas de sprites
 const char *PLAYER_SPRITE = "A"; // Sprite do jogador
@@ -29,10 +31,12 @@ int score = 0; // Pontuação do jogador
 int invaders[INVADER_ROWS][INVADER_COLS]; // Matriz de invasores
 int invaderPosX[INVADER_ROWS][INVADER_COLS]; // Posições X dos invasores
 int invaderPosY[INVADER_ROWS][INVADER_COLS]; // Posições Y dos invasores
+int alienShootTimer[INVADER_ROWS][INVADER_COLS] = {0}; // Timer de disparo para cada alien
 int gameState = 0; // 0 = menu, 1 = jogando, 2 = game over, 3 = highscore
 char playerName[MAX_NAME_LENGTH + 1] = {0}; // Nome do jogador
 int nameIndex = 0; // Índice para controle de caracteres do nome
 int nameEntered = 0; // Flag para verificar se o nome foi inserido
+
 
 // Funções de inicialização
 void initGame(); // Inicializa o jogo
@@ -259,7 +263,7 @@ void drawInvaders()
         {
             if (invaders[i][j] == 1) // Verifica se o invasor está ativo
             {
-                DrawText(INVADER_SPRITE, invaderPosX[i][j], invaderPosY[i][j], 20, WHITE);
+                DrawText(INVADER_SPRITE, invaderPosX[i][j], invaderPosY[i][j], 20, GREEN);
             }
         }
     }
@@ -279,7 +283,7 @@ void drawAlienBullet()
 {
     if (alienBulletY > 0)
     {
-        DrawText(ALIEN_BULLET_SPRITE, alienBulletX, alienBulletY, 20, WHITE);
+        DrawText(ALIEN_BULLET_SPRITE, alienBulletX, alienBulletY, 20, GREEN);
     }
 }
 
@@ -383,18 +387,19 @@ void alienShoot()
 {
     for (int i = INVADER_ROWS - 1; i >= 0; i--)
     {
-        for (int j = rand() % INVADER_COLS; j < INVADER_COLS; j++)
+        for (int j = 0; j < INVADER_COLS; j++)
         {
-            if (invaders[i][j] == 1) // Se o invasor está ativo
+            // Verifica se o alien está ativo e se o timer permite o disparo
+            if (invaders[i][j] == 1 && alienShootTimer[i][j] <= 0) 
             {
                 alienBulletX = invaderPosX[i][j]; // Define a posição X da bala
                 alienBulletY = invaderPosY[i][j] + 20; // Define a posição Y da bala
-                return;
+                alienShootTimer[i][j] = SHOOT_INTERVAL; // Reseta o timer
+                return; // Sai da função após disparar
             }
         }
     }
 }
-
 // Verifica colisões entre balas e invasores/jogador
 void checkCollisions()
 {
