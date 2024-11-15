@@ -12,10 +12,9 @@
 #define BULLET_SPEED 10 // Velocidade da bala
 #define INVADER_ROWS 5 // Número de linhas de invasores
 #define INVADER_COLS 10 // Número de colunas de invasores
-#define SHOOT_INTERVAL 30 // Ajuste este valor para aumentar ou diminuir a frequência de disparos
 #define INVADER_SPEED 2 // Velocidade dos invasores
 #define MAX_NAME_LENGTH 20 // Comprimento máximo do nome do jogador
-
+#define MAX_ALIEN_BULLETS 50  // Limite de balas de alien que podem existir
 
 // Estruturas de sprites
 const char *PLAYER_SPRITE = "A"; // Sprite do jogador
@@ -31,12 +30,10 @@ int score = 0; // Pontuação do jogador
 int invaders[INVADER_ROWS][INVADER_COLS]; // Matriz de invasores
 int invaderPosX[INVADER_ROWS][INVADER_COLS]; // Posições X dos invasores
 int invaderPosY[INVADER_ROWS][INVADER_COLS]; // Posições Y dos invasores
-int alienShootTimer[INVADER_ROWS][INVADER_COLS] = {0}; // Timer de disparo para cada alien
 int gameState = 0; // 0 = menu, 1 = jogando, 2 = game over, 3 = highscore
 char playerName[MAX_NAME_LENGTH + 1] = {0}; // Nome do jogador
 int nameIndex = 0; // Índice para controle de caracteres do nome
 int nameEntered = 0; // Flag para verificar se o nome foi inserido
-
 
 // Funções de inicialização
 void initGame(); // Inicializa o jogo
@@ -59,6 +56,16 @@ void updateAlienBullet(); // Atualiza a posição da bala do invasor
 void updateInvaders(); // Atualiza a posição dos invasores
 void alienShoot(); // Dispara uma bala do invasor
 void checkCollisions(); // Verifica colisões
+
+// Estrutura para armazenar a bala de um alien
+typedef struct AlienBullet {
+    int x;
+    int y;
+    int active;  // 0 para inativa, 1 para ativa
+} AlienBullet;
+
+// Vetor para armazenar as balas dos aliens
+AlienBullet alienBullets[MAX_ALIEN_BULLETS];
 
 int main(void)
 {
@@ -263,7 +270,7 @@ void drawInvaders()
         {
             if (invaders[i][j] == 1) // Verifica se o invasor está ativo
             {
-                DrawText(INVADER_SPRITE, invaderPosX[i][j], invaderPosY[i][j], 20, GREEN);
+                DrawText(INVADER_SPRITE, invaderPosX[i][j], invaderPosY[i][j], 20, WHITE);
             }
         }
     }
@@ -281,9 +288,10 @@ void drawBullet()
 // Desenha a bala do invasor na tela
 void drawAlienBullet()
 {
-    if (alienBulletY > 0)
-    {
-        DrawText(ALIEN_BULLET_SPRITE, alienBulletX, alienBulletY, 20, GREEN);
+    for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
+        if (alienBullets[i].active) {
+            DrawText(ALIEN_BULLET_SPRITE, alienBullets[i].x, alienBullets[i].y, 20, WHITE);
+        }
     }
 }
 
@@ -330,14 +338,13 @@ void updateBullet()
 // Atualiza a posição da bala do invasor
 void updateAlienBullet()
 {
-    if (alienBulletY > 0) // Se a bala está ativa
-    {
-        alienBulletY += BULLET_SPEED; // Move a bala para baixo
-    }
-    else // Se a bala saiu da tela
-    {
-        alienBulletX = -1;
-        alienBulletY = -1;
+   for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
+        if (alienBullets[i].active) {
+            alienBullets[i].y += 5;  // Velocidade da bala dos aliens
+            if (alienBullets[i].y > SCREEN_HEIGHT) {
+                alienBullets[i].active = 0;  // Desativa a bala quando sai da tela
+            }
+        }
     }
 }
 
@@ -383,36 +390,31 @@ void updateInvaders()
 }
 
 // Dispara uma bala de um invasor
-void alienShoot()
-{
-    for (int i = INVADER_ROWS - 1; i >= 0; i--)
-    {
-        for (int j = 0; j < INVADER_COLS; j++)
-        {
-            // Verifica se o alien está ativo e se o timer permite o disparo
-            if (invaders[i][j] == 1 && alienShootTimer[i][j] <= 0) 
-            {
-                alienBulletX = invaderPosX[i][j]; // Define a posição X da bala
-                alienBulletY = invaderPosY[i][j] + 20; // Define a posição Y da bala
-                alienShootTimer[i][j] = SHOOT_INTERVAL; // Reseta o timer
-                return; // Sai da função após disparar
+void alienShoot() {
+    // Tente disparar de qualquer alien aleatoriamente
+    for (int i = 0; i < INVADER_ROWS; i++) {
+        for (int j = 0; j < INVADER_COLS; j++) {
+            if (invaders[i][j] == 1) {  // Verifique se o alien está vivo
+                int index = i * INVADER_COLS + j; // Index para a bala do alien
+                if (alienBullets[index].active == 0 && (rand() % 100) < 2) {  // Tiro aleatório
+                    alienBullets[index].x = invaderPosX[i][j] + 10;  // Posição X
+                    alienBullets[index].y = invaderPosY[i][j] + 20;  // Posição Y
+                    alienBullets[index].active = 1;  // Ativa a bala
+                }
             }
         }
     }
 }
+
+
 // Verifica colisões entre balas e invasores/jogador
-void checkCollisions()
-{
+void checkCollisions() {
     // Verifica colisões entre a bala do jogador e os invasores
-    for (int i = 0; i < INVADER_ROWS; i++)
-    {
-        for (int j = 0; j < INVADER_COLS; j++)
-        {
-            if (invaders[i][j] == 1) // Se o invasor está ativo
-            {
+    for (int i = 0; i < INVADER_ROWS; i++) {
+        for (int j = 0; j < INVADER_COLS; j++) {
+            if (invaders[i][j] == 1) { // Se o invasor está ativo
                 if (bulletX >= invaderPosX[i][j] && bulletX <= invaderPosX[i][j] + 10 &&
-                    bulletY >= invaderPosY[i][j] && bulletY <= invaderPosY[i][j] + 10) // Se há colisão
-                {
+                    bulletY >= invaderPosY[i][j] && bulletY <= invaderPosY[i][j] + 10) { // Se há colisão
                     invaders[i][j] = 0; // Desativa o invasor
                     bulletX = bulletY = -1; // Reseta a bala do jogador
                     score += 10; // Aumenta a pontuação
@@ -421,12 +423,17 @@ void checkCollisions()
         }
     }
 
-    // Verifica colisões entre a bala do invasor e o jogador
-    if (alienBulletY > playerY && alienBulletY < playerY + 10 && alienBulletX > playerX && alienBulletX < playerX + 20)
-    {
-        gameState = 2; // Define o estado do jogo como game over
+    // Verifica colisões entre os tiros dos invasores e o jogador
+    for (int i = 0; i < MAX_ALIEN_BULLETS; i++) {
+        if (alienBullets[i].active) {  // Se a bala do invasor está ativa
+            if (alienBullets[i].x > playerX && alienBullets[i].x < playerX + 20 &&
+                alienBullets[i].y > playerY && alienBullets[i].y < playerY + 20) { // Se há colisão
+                gameState = 2;  // Game Over
+            }
+        }
     }
 }
+
 
 // Reseta o jogo para o estado inicial
 void resetGame()
