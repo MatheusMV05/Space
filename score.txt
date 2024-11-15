@@ -8,3 +8,5 @@ Nome: Julia, Score: 170
 Nome: Julia, Score: 90
 Nome: Julia, Score: 10
 Nome: Julia, Score: 10
+Nome: Julia, Score: 10
+Nome: womp womp, Score: 180

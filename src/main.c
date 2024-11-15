@@ -11,7 +11,7 @@
 #define PLAYER_SPEED 5       // Velocidade do jogador
 #define BULLET_SPEED 10      // Velocidade da bala
 #define INVADER_ROWS 5       // Número de linhas de invasores
-#define INVADER_COLS 10       // Número de colunas de invasores
+#define INVADER_COLS 10      // Número de colunas de invasores
 #define INVADER_SPEED 2      // Velocidade dos invasores
 #define MAX_NAME_LENGTH 20   // Comprimento máximo do nome do jogador
 #define MAX_ALIEN_BULLETS 50 // Limite de balas de alien que podem existir
@@ -100,9 +100,18 @@ int main(void)
             // Desenha o menu
             BeginDrawing();
             ClearBackground(BLACK);
-            DrawText("Invasores do Espaco", SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 - 100, 40, WHITE);
-            DrawText("Pressione ENTER para comecar", SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2, 20, WHITE);
-            DrawText("Pressione ESC para sair", SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 + 40, 20, WHITE);
+
+            // Centralize o texto
+            int titleWidth = MeasureText("Invasores do Espaco", 40);
+            DrawText("Invasores do Espaco", (SCREEN_WIDTH - titleWidth) / 2, SCREEN_HEIGHT / 2 - 100, 40, PURPLE);
+
+            // Centralize o texto
+            int enterWidth = MeasureText("Pressione ENTER para comecar", 20);
+            DrawText("Pressione ENTER para comecar", (SCREEN_WIDTH - enterWidth) / 2, SCREEN_HEIGHT / 2, 20, WHITE);
+
+            // Centralize o texto
+            int escWidth = MeasureText("Pressione ESC para sair", 20);
+            DrawText("Pressione ESC para sair", (SCREEN_WIDTH - escWidth) / 2, SCREEN_HEIGHT / 2 + 40, 20, WHITE);
             EndDrawing();
 
             // Inicia o jogo se ENTER for pressionado
@@ -162,10 +171,22 @@ int main(void)
             {
                 BeginDrawing();
                 ClearBackground(BLACK);
-                DrawText("Game Over!", SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 - 100, 40, RED);
-                DrawText("Digite seu nome:", SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 - 50, 20, WHITE);
-                DrawText(playerName, SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2, 20, WHITE);
-                DrawText("Pressione ENTER para confirmar", SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 + 40, 20, WHITE);
+
+                // Centralize o texto
+                int gameOverWidth = MeasureText("Game Over!", 40);
+                DrawText("Game Over!", (SCREEN_WIDTH - gameOverWidth) / 2, SCREEN_HEIGHT / 2 - 100, 40, RED);
+
+                // Centralize o texto
+                int enterNameWidth = MeasureText("Digite seu nome:", 20);
+                DrawText("Digite seu nome:", (SCREEN_WIDTH - enterNameWidth) / 2, SCREEN_HEIGHT / 2 - 50, 20, WHITE);
+
+                // Centralize o texto
+                int playerNameWidth = MeasureText(playerName, 20);
+                DrawText(playerName, (SCREEN_WIDTH - playerNameWidth) / 2, SCREEN_HEIGHT / 2, 20, WHITE);
+
+                // Centralize o texto
+                int confirmWidth = MeasureText("Pressione ENTER para confirmar", 20);
+                DrawText("Pressione ENTER para confirmar", (SCREEN_WIDTH - confirmWidth) / 2, SCREEN_HEIGHT / 2 + 40, 20, WHITE);
                 EndDrawing();
 
                 // Captura o nome do jogador
@@ -191,9 +212,18 @@ int main(void)
                 BeginDrawing();
                 ClearBackground(BLACK);
                 gameOver();
-                DrawText("Pressione R para reiniciar", SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 + 40, 20, WHITE);
-                DrawText("Pressione M para voltar ao menu", SCREEN_WIDTH / 2 - 170, SCREEN_HEIGHT / 2 + 80, 20, WHITE);
-                DrawText("Pressione ESC para sair", SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 + 120, 20, WHITE);
+
+                // Centralize o texto
+                int restartTextWidth = MeasureText("Pressione R para reiniciar", 20);
+                DrawText("Pressione R para reiniciar", (SCREEN_WIDTH - restartTextWidth) / 2, SCREEN_HEIGHT / 2 + 40, 20, WHITE);
+
+                // Centralize o texto
+                int menuTextWidth = MeasureText("Pressione M para voltar ao menu", 20);
+                DrawText("Pressione M para voltar ao menu", (SCREEN_WIDTH - menuTextWidth) / 2, SCREEN_HEIGHT / 2 + 80, 20, WHITE);
+
+                // Centralize o texto
+                int sairTextWidth = MeasureText("Pressione ESC para sair", 20);
+                DrawText("Pressione ESC para sair", (SCREEN_WIDTH - sairTextWidth) / 2, SCREEN_HEIGHT / 2 + 120, 20, WHITE);
                 EndDrawing();
 
                 // Reinicia ou volta ao menu
@@ -218,10 +248,22 @@ int main(void)
             {
                 BeginDrawing();
                 ClearBackground(BLACK);
-                DrawText("VOCÊ VENCEU!", SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 - 100, 40, GREEN);
-                DrawText("Digite seu nome:", SCREEN_WIDTH / 2 - 120, SCREEN_HEIGHT / 2 - 50, 20, WHITE);
-                DrawText(playerName, SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2, 20, WHITE);
-                DrawText("Pressione ENTER para confirmar", SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 + 40, 20, WHITE);
+
+                // Centralize o texto
+                int winnerTextWidth = MeasureText("VOCÊ VENCEU!", 40);
+                DrawText("VOCÊ VENCEU!", (SCREEN_WIDTH - winnerTextWidth) / 2, SCREEN_HEIGHT / 2 - 100, 40, GREEN);
+
+                // Centralize o texto
+                int enterNameTextWidth = MeasureText("Digite seu nome:", 20);
+                DrawText("Digite seu nome:", (SCREEN_WIDTH - enterNameTextWidth) / 2, SCREEN_HEIGHT / 2 - 50, 20, WHITE);
+
+                // Centralize o texto
+                int playerNameTextWidth = MeasureText(playerName, 20);
+                DrawText(playerName, (SCREEN_WIDTH - playerNameTextWidth) / 2, SCREEN_HEIGHT / 2, 20, WHITE);
+
+                // Centralize o texto
+                int confirmTextWidth = MeasureText("Pressione ENTER para confirmar", 20);
+                DrawText("Pressione ENTER para confirmar", (SCREEN_WIDTH - confirmTextWidth) / 2, SCREEN_HEIGHT / 2 + 40, 20, WHITE);
                 EndDrawing();
 
                 // Capture the player's name input
@@ -246,9 +288,18 @@ int main(void)
                 // Show options after entering name
                 BeginDrawing();
                 ClearBackground(BLACK);
-                DrawText("Pressione R para reiniciar", SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 + 40, 20, WHITE);
-                DrawText("Pressione M para voltar ao menu", SCREEN_WIDTH / 2 - 170, SCREEN_HEIGHT / 2 + 80, 20, WHITE);
-                DrawText("Pressione ESC para sair", SCREEN_WIDTH / 2 - 100, SCREEN_HEIGHT / 2 + 120, 20, WHITE);
+
+                // Centralize o texto
+                int reiniciarTextWidth = MeasureText("Pressione R para reiniciar", 20);
+                DrawText("Pressione R para reiniciar", (SCREEN_WIDTH - reiniciarTextWidth) / 2, SCREEN_HEIGHT / 2 + 40, 20, WHITE);
+
+                // Centralize o texto
+                int menuTextWidth = MeasureText("Pressione M para voltar ao menu", 20);
+                DrawText("Pressione M para voltar ao menu", (SCREEN_WIDTH - menuTextWidth) / 2, SCREEN_HEIGHT / 2 + 80, 20, WHITE);
+
+                // Centralize o texto
+                int sairTextWidth = MeasureText("Pressione ESC para sair", 20);
+                DrawText("Pressione ESC para sair", (SCREEN_WIDTH - sairTextWidth) / 2, SCREEN_HEIGHT / 2 + 120, 20, WHITE);
                 EndDrawing();
 
                 // Handle input to restart or return to menu
