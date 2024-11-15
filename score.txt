@@ -3,3 +3,4 @@ Nome: bob, Score: 90
 Nome: HI, Score: 0
 Nome: Winner, Score: 0
 Nome: VIni, Score: 0
+Nome: aaaaaaad, Score: 20
