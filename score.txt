@@ -10,3 +10,4 @@ Nome: Julia, Score: 10
 Nome: Julia, Score: 10
 Nome: Julia, Score: 10
 Nome: womp womp, Score: 180
+Nome: testanto erros, Score: 60
