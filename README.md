@@ -1,4 +1,4 @@
-![bannergithub](https://imgur.com/undefined.png)
+![bannergithub](https://imgur.com/861U3NS.png)
 
 <p align="center"><b>Invasores do espaço</b> é um jogo de pesca desenvolvido em C utilizando a raylib, baseado no famoso jogo space invaders.</p>
 
