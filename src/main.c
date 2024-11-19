@@ -5,6 +5,7 @@
 #include "screen.h"
 #include "timer.h"
 #include "keyboard.h"
+#include <stdbool.h>
 
 #define SCREEN_WIDTH 800     // Largura da tela do jogo
 #define SCREEN_HEIGHT 600    // Altura da tela do jogo
@@ -68,6 +69,26 @@ typedef struct AlienBullet
 
 // Vetor para armazenar as balas dos aliens
 AlienBullet alienBullets[MAX_ALIEN_BULLETS];
+
+// Estrutura para armazenar um score
+typedef struct {
+    char name[MAX_NAME_LENGTH + 1];
+    int score;
+} PlayerScore;
+
+// Função para ordenar os scores
+void sortScores(PlayerScore scores[], int count) {
+    for (int i = 0; i < count - 1; i++) {
+        for (int j = i + 1; j < count; j++) {
+            if (scores[j].score > scores[i].score) {
+                // Troca os elementos
+                PlayerScore temp = scores[i];
+                scores[i] = scores[j];
+                scores[j] = temp;
+            }
+        }
+    }
+}
 
 int main(void)
 {
@@ -357,49 +378,46 @@ void gameOver()
 }
 
 // Exibe a tela de high score
-void highScoreScreen()
-{
+void highScoreScreen() {
     FILE *file = fopen("score.txt", "r");
-    if (file != NULL)
-    {
+    if (file != NULL) {
         char line[100];
-        char topScores[5][100];
-        int yOffset = 100;
+        PlayerScore scores[100]; // Suponha no máximo 100 scores
         int count = 0;
 
-        while (fgets(line, sizeof(line), file) && count < 5)
-        {
-            strcpy(topScores[count], line);
+        // Lê as pontuações do arquivo
+        while (fgets(line, sizeof(line), file) && count < 100) {
+            sscanf(line, "Nome: %20[^,], Score: %d", scores[count].name, &scores[count].score);
             count++;
         }
         fclose(file);
 
+        // Ordena as pontuações
+        sortScores(scores, count);
+
+        // Exibe os scores na tela
         BeginDrawing();
         ClearBackground(BLACK);
 
-        // Centralize o título
         int titleWidth = MeasureText("High Scores", 40);
         DrawText("High Scores", (SCREEN_WIDTH - titleWidth) / 2, 50, 40, PURPLE);
 
-        // Exibe as 5 melhores pontuações
-        for (int i = 0; i < count; i++)
-        {
-            DrawText(topScores[i], 100, yOffset, 20, WHITE);
+        int yOffset = 100;
+        for (int i = 0; i < count && i < 5; i++) { // Exibe apenas os 5 melhores scores
+            char scoreText[100];
+            sprintf(scoreText, "%d. %s - %d", i + 1, scores[i].name, scores[i].score);
+            DrawText(scoreText, 100, yOffset, 20, WHITE);
             yOffset += 30;
         }
 
-        // Centralize o texto
         int menuTextWidth = MeasureText("Pressione M para voltar ao menu", 20);
         DrawText("Pressione M para voltar ao menu", (SCREEN_WIDTH - menuTextWidth) / 2, SCREEN_HEIGHT - 100, 20, WHITE);
         EndDrawing();
 
-        if (IsKeyPressed(KEY_M))
-        {
+        if (IsKeyPressed(KEY_M)) {
             gameState = 0;
         }
-    }
-    else
-    {
+    } else {
         printf("Erro ao abrir o arquivo de score.\n");
     }
 }

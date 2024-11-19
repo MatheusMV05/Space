@@ -52,5 +52,6 @@ Mkfile.old
 dkms.conf
 
 #executavel
-a.out
-score.txt
+/space
+/score.txt
+
