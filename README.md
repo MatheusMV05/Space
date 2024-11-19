@@ -43,9 +43,9 @@ cd Space
 ```
 make run
 ```
+Para mais informações, consulte a [documentação oficial da Raylib para Linux](https://github.com/raysan5/raylib/wiki/Working-on-GNU-Linux).
 
 <br>
-Para mais informações, consulte a [documentação oficial da Raylib para Linux](https://github.com/raysan5/raylib/wiki/Working-on-GNU-Linux).
 
 ## Em sistemas macOS:
 
