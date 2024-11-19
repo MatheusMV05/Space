@@ -36,7 +36,7 @@ cd ~
 6º)  Clone o repositório do jogo:
 ```
 git clone https://github.com/MatheusMV05/Space.git
-cd src
+cd Space
 ```
 
 7º)  Compile e rode o jogo:
