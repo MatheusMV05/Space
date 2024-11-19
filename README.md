@@ -3,7 +3,7 @@
 <p align="center"><b>Invasores do espaço</b> é um clone do famoso jogo Space Invaders desenvolvido em C utilizando a cli-lib e raylib.</p>
 
 ---
-
+## Em sistemas Linux:
 # ⚙️ Como rodar:
 
 1º)  Você precisará do GCC, make e git para baixar e compilar a biblioteca:
@@ -45,3 +45,32 @@ make run
 ```
 
 <br>
+Para mais informações, consulte a [documentação oficial da Raylib para Linux](https://github.com/raysan5/raylib/wiki/Working-on-GNU-Linux).
+
+## Em sistemas macOS:
+
+1º) Certifique-se de ter o Homebrew instalado. Caso não tenha, instale-o executando:
+```
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+2º) Use o Homebrew para instalar o compilador GCC e a Raylib:
+```
+brew install gcc
+brew install raylib
+```
+
+3º) Clone o repositório do jogo:
+```
+git clone https://github.com/MatheusMV05/Space.git
+cd Space
+```
+
+4º) Compile e rode o jogo:
+```
+make run
+```
+
+Para mais informações, consulte a [documentação oficial da Raylib para macOS](https://github.com/raysan5/raylib/wiki/Working-on-macOS).
+
+---
