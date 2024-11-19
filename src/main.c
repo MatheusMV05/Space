@@ -571,9 +571,9 @@ void alienShoot()
             if (invaders[i][j] == 1)
             {                                     // Verifique se o alien está vivo
                 int index = i * INVADER_COLS + j; // Index para a bala do alien
-                if (alienBullets[index].active == 0 && (rand() % 100) < 2)
+                if (alienBullets[index].active == 0 && (rand() % 40) < 2)
                 {                                                   // Tiro aleatório
-                    alienBullets[index].x = invaderPosX[i][j] + 10; // Posição X
+                    alienBullets[index].x = invaderPosX[i][j] + 20; // Posição X
                     alienBullets[index].y = invaderPosY[i][j] + 20; // Posição Y
                     alienBullets[index].active = 1;                 // Ativa a bala
                 }
@@ -592,8 +592,8 @@ void checkCollisions()
         {
             if (invaders[i][j] == 1)
             { // Se o invasor está ativo
-                if (bulletX >= invaderPosX[i][j] && bulletX <= invaderPosX[i][j] + 10 &&
-                    bulletY >= invaderPosY[i][j] && bulletY <= invaderPosY[i][j] + 10)
+                if (bulletX >= invaderPosX[i][j] && bulletX <= invaderPosX[i][j] + 20 &&
+                    bulletY >= invaderPosY[i][j] && bulletY <= invaderPosY[i][j] + 20)
                 {                           // Se há colisão
                     invaders[i][j] = 0;     // Desativa o invasor
                     bulletX = bulletY = -1; // Reseta a bala do jogador
