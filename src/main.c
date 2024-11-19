@@ -51,7 +51,6 @@ void gameOver();        // Exibe a tela de game over
 void highScoreScreen(); // Exibe a tela de high score
 
 // Funções de movimentação e controle
-void movePlayer();        // Move o jogador
 void shootBullet();       // Dispara uma bala do jogador
 void updateBullet();      // Atualiza a posição da bala do jogador
 void updateAlienBullet(); // Atualiza a posição da bala do invasor
@@ -71,16 +70,21 @@ typedef struct AlienBullet
 AlienBullet alienBullets[MAX_ALIEN_BULLETS];
 
 // Estrutura para armazenar um score
-typedef struct {
+typedef struct
+{
     char name[MAX_NAME_LENGTH + 1];
     int score;
 } PlayerScore;
 
 // Função para ordenar os scores
-void sortScores(PlayerScore scores[], int count) {
-    for (int i = 0; i < count - 1; i++) {
-        for (int j = i + 1; j < count; j++) {
-            if (scores[j].score > scores[i].score) {
+void sortScores(PlayerScore scores[], int count)
+{
+    for (int i = 0; i < count - 1; i++)
+    {
+        for (int j = i + 1; j < count; j++)
+        {
+            if (scores[j].score > scores[i].score)
+            {
                 // Troca os elementos
                 PlayerScore temp = scores[i];
                 scores[i] = scores[j];
@@ -95,8 +99,7 @@ int main(void)
     // Inicializa a janela do jogo
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Invasores do espaço");
     // Inicializa as bibliotecas de tela, timer e teclado
-    timerInit(1000 / 60); //60 fps
-    
+    timerInit(1000 / 60); // 60 fps
 
     // Inicializa o jogo
     initGame();
@@ -155,17 +158,25 @@ int main(void)
 
                 // Movimentação do jogador
                 if (IsKeyDown(KEY_A))
+                {
                     playerX -= PLAYER_SPEED;
+                }
                 if (IsKeyDown(KEY_D))
+                {
                     playerX += PLAYER_SPEED;
+                }
                 if (IsKeyPressed(KEY_W))
-                    shootBullet(); // Dispara uma bala
+                {
+                    shootBullet();
+                } // Dispara uma bala
 
                 // Restringe o movimento do jogador aos limites da tela
-                if (playerX < 0)
+                if (playerX < 0) {
                     playerX = 0;
-                if (playerX > SCREEN_WIDTH - 20)
+                }
+                if (playerX > SCREEN_WIDTH - 20) {
                     playerX = SCREEN_WIDTH - 20;
+                }
 
                 // Disparo do invasor aleatoriamente
                 if (alienBulletY < 0 && (rand() % 50) == 0)
@@ -276,12 +287,11 @@ int main(void)
     }
 
     // Limpeza e encerramento
-   
+
     timerDestroy();
     CloseWindow();
     return 0;
 }
-
 
 // Salva a pontuação do jogador em um arquivo
 void saveScore()
@@ -297,6 +307,7 @@ void saveScore()
         printf("Erro ao abrir o arquivo de score.\n");
     }
 }
+
 
 // Inicializa as variáveis do jogo
 void initGame()
@@ -378,15 +389,18 @@ void gameOver()
 }
 
 // Exibe a tela de high score
-void highScoreScreen() {
+void highScoreScreen()
+{
     FILE *file = fopen("score.txt", "r");
-    if (file != NULL) {
+    if (file != NULL)
+    {
         char line[100];
         PlayerScore scores[100]; // Suponha no máximo 100 scores
         int count = 0;
 
         // Lê as pontuações do arquivo
-        while (fgets(line, sizeof(line), file) && count < 100) {
+        while (fgets(line, sizeof(line), file) && count < 100)
+        {
             sscanf(line, "Nome: %20[^,], Score: %d", scores[count].name, &scores[count].score);
             count++;
         }
@@ -403,7 +417,8 @@ void highScoreScreen() {
         DrawText("High Scores", (SCREEN_WIDTH - titleWidth) / 2, 50, 40, PURPLE);
 
         int yOffset = 100;
-        for (int i = 0; i < count && i < 5; i++) { // Exibe apenas os 5 melhores scores
+        for (int i = 0; i < count && i < 5; i++)
+        { // Exibe apenas os 5 melhores scores
             char scoreText[100];
             sprintf(scoreText, "%d. %s - %d", i + 1, scores[i].name, scores[i].score);
             DrawText(scoreText, 100, yOffset, 20, WHITE);
@@ -414,10 +429,13 @@ void highScoreScreen() {
         DrawText("Pressione M para voltar ao menu", (SCREEN_WIDTH - menuTextWidth) / 2, SCREEN_HEIGHT - 100, 20, WHITE);
         EndDrawing();
 
-        if (IsKeyPressed(KEY_M)) {
+        if (IsKeyPressed(KEY_M))
+        {
             gameState = 0;
         }
-    } else {
+    }
+    else
+    {
         printf("Erro ao abrir o arquivo de score.\n");
     }
 }
@@ -504,13 +522,18 @@ void updateInvaders()
     int leftMostInvader = SCREEN_WIDTH;
     int rightMostInvader = 0;
 
-    for (int i = 0; i < INVADER_ROWS; i++) {
-        for (int j = 0; j < INVADER_COLS; j++) {
-            if (invaders[i][j] == 1) {
-                if (invaderPosX[i][j] < leftMostInvader) {
+    for (int i = 0; i < INVADER_ROWS; i++)
+    {
+        for (int j = 0; j < INVADER_COLS; j++)
+        {
+            if (invaders[i][j] == 1)
+            {
+                if (invaderPosX[i][j] < leftMostInvader)
+                {
                     leftMostInvader = invaderPosX[i][j];
                 }
-                if (invaderPosX[i][j] > rightMostInvader) {
+                if (invaderPosX[i][j] > rightMostInvader)
+                {
                     rightMostInvader = invaderPosX[i][j];
                 }
             }
