@@ -501,7 +501,23 @@ void updateInvaders()
     }
 
     // Verifica se os invasores precisam mudar de direção
-    if (invaderPosX[0][0] <= 0 || invaderPosX[0][INVADER_COLS - 1] >= SCREEN_WIDTH - 20)
+    int leftMostInvader = SCREEN_WIDTH;
+    int rightMostInvader = 0;
+
+    for (int i = 0; i < INVADER_ROWS; i++) {
+        for (int j = 0; j < INVADER_COLS; j++) {
+            if (invaders[i][j] == 1) {
+                if (invaderPosX[i][j] < leftMostInvader) {
+                    leftMostInvader = invaderPosX[i][j];
+                }
+                if (invaderPosX[i][j] > rightMostInvader) {
+                    rightMostInvader = invaderPosX[i][j];
+                }
+            }
+        }
+    }
+
+    if (leftMostInvader <= 0 || rightMostInvader >= SCREEN_WIDTH - 20)
     {
         direction = -direction; // Inverte a direção dos invasores
         stepDown = 1;           // Sinaliza para mover os invasores para baixo
