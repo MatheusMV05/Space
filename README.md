@@ -1,6 +1,6 @@
 ![bannergithub](https://imgur.com/861U3NS.png)
 
-<p align="center"><b>Invasores do espaço</b> é um clone do famoso jogo Space Invaders desenvolvido em C utilizando a cli-lib com auxilio da raylib.</p>
+<p align="center"><b>Invasores do espaço</b> é um clone do famoso jogo Space Invaders desenvolvido em C utilizando a cli-lib e raylib.</p>
 
 ---
 
