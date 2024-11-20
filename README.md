@@ -49,24 +49,34 @@ Para mais informações, consulte a [documentação oficial da Raylib para Linux
 
 ## Em sistemas macOS:
 
-1º) Certifique-se de ter o Homebrew instalado. Caso não tenha, instale-o executando:
+1º) Configure o ambiente para suportar a compilação estática:
 ```
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
-
-2º) Use o Homebrew para instalar o compilador GCC e a Raylib:
-```
-brew install gcc
-brew install raylib
+export MACOSX_DEPLOYMENT_TARGET=10.9
 ```
 
-3º) Clone o repositório do jogo:
+2º) Instale as ferramentas XCode (certifique-se de atualizar as ferramentas após a instalação):
+```
+xcode-select --install
+```
+
+3º) Baixe o código-fonte do Raylib diretamente do GitHub e entre na pasta:
+```
+git clone https://github.com/raysan5/raylib.git
+cd raylib/src
+```
+
+4º) Compile a raylib para garantir que a configuração estática esteja aplicada:
+```
+make
+```
+
+5º) Clone o repositório do jogo:
 ```
 git clone https://github.com/MatheusMV05/Space.git
 cd Space
 ```
 
-4º) Compile e rode o jogo:
+6º) Compile e rode o jogo usando o seguinte comando:
 ```
 make run
 ```
