@@ -29,7 +29,7 @@ endif
 # Coleta todos os arquivos .c no diretório src.
 SRCS = $(wildcard $(SRC_DIR)/*.c)
 # Substitui a extensão .c por .o nos arquivos fonte para criar os objetos correspondentes.
-OBJS = $(SRCS:.c=.o)
+OBJS = $(patsubst $(SRC_DIR)/%.c, $(SRC_DIR)/%.o, $(SRCS))
 
 # Regras
 # Regra principal que será executada se nenhuma outra for especificada.
@@ -41,7 +41,7 @@ $(TARGET): $(OBJS)
 	$(CC) -o $@ $^ $(LIBS)
 
 # Regra para compilar arquivos .c em arquivos .o.
-%.o: %.c
+$(SRC_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Regra para compilar e executar o programa.
