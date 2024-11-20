@@ -4,7 +4,6 @@
 #include <string.h>
 #include "screen.h"
 #include "timer.h"
-#include "keyboard.h"
 #include <stdbool.h>
 
 #define SCREEN_WIDTH 800     // Largura da tela do jogo
